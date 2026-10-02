@@ -55,7 +55,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/revivifai/the-office-${{ matrix.name }}
+          images: ghcr.io/revivifai/${{ matrix.name }}
           tags: |
             type=ref,event=branch
             type=sha,prefix=sha-,format=short

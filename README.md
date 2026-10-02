@@ -102,8 +102,8 @@ One dependency-free image runs either service, selected by command. Publish to
 GHCR happens in `.github/workflows/publish.yml` on merge to `main`:
 
 ```
-ghcr.io/revivifai/the-office-office-activity:latest
-ghcr.io/revivifai/the-office-office-app:latest
+ghcr.io/revivifai/office-activity:latest
+ghcr.io/revivifai/office-app:latest
 ```
 
 Pin a tag or digest in `/opt/hive/.env` (`OFFICE_ACTIVITY_IMAGE`,
