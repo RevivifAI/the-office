@@ -1,21 +1,37 @@
 name: publish
 
-# Builds and publishes the two live office images to GitHub Container Registry.
-# The operator pins the resulting tag or digest in /opt/hive/.env, per the
-# approved Step One plan. Nothing here deploys; it only produces images.
+# Runs the focused test suite on every change, then builds and publishes the two
+# live office images to GitHub Container Registry on merge to main. The operator
+# pins the resulting tag or digest in /opt/hive/.env, per the approved Step One
+# plan. Nothing here deploys; it only verifies and produces images.
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
-  publish:
+  test:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Focused checks
+        run: node tests/run.mjs
+
+  publish:
+    if: github.event_name != 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       matrix:
         include:
