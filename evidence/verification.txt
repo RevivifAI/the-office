@@ -1,0 +1,38 @@
+PASS  seven agent buttons :: found 7
+PASS  seven inline avatar SVGs :: found 7
+PASS  unique element ids :: ids=89
+PASS  seven namespaced body gradients :: found 7
+PASS  distinct palette stops :: 14 unique stop colors
+PASS  no /api/ references
+PASS  no external http(s) resource refs
+PASS  no api key embedded
+PASS  hover reveal rule
+PASS  focus reveal rule
+PASS  reduced motion rule
+PASS  snapshot has seven agents :: found 7
+PASS  agent Aida has aria-label :: Aida, Chief Executive Officer. Runtime status Idle. At their desk. Rev
+PASS  agent Aida card shows task/status :: Aida Chief Executive Officer Idle · At their desk · Reviewing WEB-168 · In review No recen
+PASS  agent Aida plaque matches snapshot :: dom=WEB-168 snapshot=WEB-168
+PASS  agent Clara has aria-label :: Clara, COO / Delivery & Engineering Operations Manager. Runtime status
+PASS  agent Clara card shows task/status :: Clara COO / Delivery & Engineering Operations Manager Running · At their desk · Working WE
+PASS  agent Clara plaque matches snapshot :: dom=WEB-389 snapshot=WEB-389
+PASS  agent Maya has aria-label :: Maya, Software Engineer II: Frontend & Application. Runtime status Run
+PASS  agent Maya card shows task/status :: Maya Software Engineer II: Frontend & Application Running · By the coffee machine · Blocke
+PASS  agent Maya plaque matches snapshot :: dom=WEB-388 snapshot=WEB-388
+PASS  agent Owen has aria-label :: Owen, Site Reliability & Network Engineer II. Runtime status Idle. At 
+PASS  agent Owen card shows task/status :: Owen Site Reliability & Network Engineer II Idle · At their desk · Reviewing WEB-28 · In r
+PASS  agent Owen plaque matches snapshot :: dom=WEB-28 snapshot=WEB-28
+PASS  agent Felix has aria-label :: Felix, Database Engineer II: SurrealDB. Runtime status Idle. By the co
+PASS  agent Felix card shows task/status :: Felix Database Engineer II: SurrealDB Idle · By the coffee machine · Blocked WEB-23 · Bloc
+PASS  agent Felix plaque matches snapshot :: dom=WEB-23 snapshot=WEB-23
+PASS  agent Nora has aria-label :: Nora, Software Engineer in Test II & Independent Quality Reviewer. Run
+PASS  agent Nora card shows task/status :: Nora Software Engineer in Test II & Independent Quality Reviewer Idle · By the coffee mach
+PASS  agent Nora plaque matches snapshot :: dom=WEB-387 snapshot=WEB-387
+PASS  agent Sienna has aria-label :: Sienna, Growth & Revenue Lead. Runtime status Idle. In the break room.
+PASS  agent Sienna card shows task/status :: Sienna Growth & Revenue Lead Idle · In the break room · Idle No active task No recent note
+PASS  agent Sienna plaque matches snapshot :: dom=null snapshot=null
+PASS  spot check Maya :: api=coffee/confused/plaque=WEB-388/badge=blocked page=coffee/confused/plaque=WEB-388/badge=blocked runtime=running task=WEB-388:blocked
+PASS  spot check Felix :: api=coffee/confused/plaque=WEB-23/badge=blocked page=coffee/confused/plaque=WEB-23/badge=blocked runtime=idle task=WEB-23:blocked
+PASS  spot check Sienna :: api=break/idle/plaque=null/badge=null page=break/idle/plaque=null/badge=null runtime=idle task=none
+
+ALL CHECKS PASSED
