@@ -1,0 +1,37 @@
+# Reference compose for the two live office containers.
+#
+# This mirrors what the cerberus host-hive repository should contain; Owen owns
+# the operator-applied version there. Both services use host networking and bind
+# 127.0.0.1 explicitly, so nothing publishes a port and no overlay listener is
+# created. Limits mirror the existing hive units.
+
+services:
+  office-activity:
+    image: ${OFFICE_ACTIVITY_IMAGE:?set OFFICE_ACTIVITY_IMAGE in /opt/hive/.env}
+    command: ["node", "server/activity.mjs"]
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      PAPERCLIP_API_URL: ${PAPERCLIP_API_URL:-http://127.0.0.1:3100}
+      PAPERCLIP_COMPANY_ID: ${PAPERCLIP_COMPANY_ID:?set PAPERCLIP_COMPANY_ID in /opt/hive/.env}
+      OFFICE_ACTIVITY_HOST: 127.0.0.1
+      OFFICE_ACTIVITY_PORT: "3110"
+      OFFICE_POLL_MS: "10000"
+    env_file:
+      - /opt/hive/secrets/office-activity.env
+    mem_limit: 128m
+    pids_limit: 128
+
+  office-app:
+    image: ${OFFICE_APP_IMAGE:?set OFFICE_APP_IMAGE in /opt/hive/.env}
+    command: ["node", "server/app.mjs"]
+    network_mode: host
+    restart: unless-stopped
+    depends_on:
+      - office-activity
+    environment:
+      OFFICE_APP_HOST: 127.0.0.1
+      OFFICE_APP_PORT: "3101"
+      OFFICE_ACTIVITY_URL: http://127.0.0.1:3110
+    mem_limit: 128m
+    pids_limit: 128

@@ -1,0 +1,62 @@
+WebWright live office (Step One) live verification
+Recorded: 2026-10-02T21:26:48Z
+Host: agent hive sandbox; control plane http://127.0.0.1:3100
+Company: 43cd5190-76e0-49dd-b0d6-e00c64900fa2
+
+Command: node server/activity.mjs  (OFFICE_ACTIVITY_HOST=127.0.0.1 OFFICE_ACTIVITY_PORT=3110 OFFICE_POLL_MS=10000)
+Command: node server/app.mjs       (OFFICE_APP_HOST=127.0.0.1 OFFICE_APP_PORT=3101 OFFICE_ACTIVITY_URL=http://127.0.0.1:3110)
+
+--- startup logs ---
+office-activity listening on http://127.0.0.1:3110 (company 43cd5190-76e0-49dd-b0d6-e00c64900fa2, poll 10000ms, control plane reachable)
+office-app listening on http://127.0.0.1:3101 (reporter http://127.0.0.1:3110)
+
+--- loopback binds (hex in /proc/net/tcp; 3110=0x0C26, 3101=0x0C1D) ---
+0100007F:0C1D -> local_address:port
+0100007F:0C26 -> local_address:port
+
+--- GET http://127.0.0.1:3110/state (control plane match, spot check) ---
+reachable=true agents=7 counts={"agents":7,"desk":4,"break":0,"coffee":3,"running":3,"blocked":3,"review":1}
+  Aida | idle | desk/thinking | plaque=WEB-441 | badge=review
+  Clara | running | desk/working | plaque=WEB-77 | badge=-
+  Maya | running | desk/working | plaque=WEB-456 | badge=-
+  Owen | running | desk/working | plaque=WEB-457 | badge=-
+  Felix | idle | coffee/confused | plaque=WEB-23 | badge=blocked
+  Nora | idle | coffee/confused | plaque=WEB-454 | badge=blocked
+  Sienna | idle | coffee/confused | plaque=WEB-399 | badge=blocked
+
+--- GET http://127.0.0.1:3110/activity?limit=6 ---
+cursor=38 count=6
+  2026-10-02T21:08:36.816Z Clara :: updated document on WEB-77
+  2026-10-02T21:09:38.067Z Clara :: released an environment
+  2026-10-02T21:11:50.739Z Nora :: moved WEB-455 to done
+  2026-10-02T21:11:50.842Z Nora :: commented on WEB-455
+  2026-10-02T21:11:52.470Z Clara :: acquired an environment
+  2026-10-02T21:11:55.862Z Clara :: created WEB-456
+
+--- office-app ---
+GET /              -> HTTP 200 bytes=724771 type=text/html; charset=utf-8
+GET /live/state    -> HTTP 200
+GET /live/activity -> HTTP 200
+POST /state        -> HTTP 405 (expected 405)
+GET /nope          -> HTTP 404 (expected 404)
+POST /live/state   -> HTTP 405 (expected 405)
+GET /live/nope     -> HTTP 404 (expected 404)
+
+--- page self-containment ---
+avatar sprite inline : true
+agents layer inline  : true
+initial state inline : true
+real palette present : true
+secret path leaked   : false
+secret action leaked : false
+external asset src   : false
+
+--- in-process suite ---
+PASS  sanitizeNote drops secret-looking text
+PASS  normalizeActivity filters secrets and orders oldest first
+PASS  state places running agent at desk, review and blocked correctly
+PASS  reporter GET /state and GET /activity behave
+PASS  office-app GET / is self contained and leaks no secret
+PASS  office-app proxies state and activity on approved paths
+
+ALL 6 CHECKS PASSED

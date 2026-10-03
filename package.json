@@ -1,0 +1,17 @@
+{
+  "name": "the-office",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "WebWright live virtual office: the office-activity reporter and the office-app server.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start:activity": "node server/activity.mjs",
+    "start:app": "node server/app.mjs",
+    "test": "node tests/run.mjs",
+    "render-avatars": "node cli/node_modules/tsx/dist/cli.mjs tools/render-avatars.mts --out assets"
+  }
+}
