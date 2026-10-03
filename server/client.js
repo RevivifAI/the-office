@@ -235,8 +235,17 @@
     });
     var url = "/live/activity" + (cursor == null ? "" : "?since=" + encodeURIComponent(cursor));
     fetchJson(url).then(function (data) {
-      if (data && typeof data.cursor === "number") cursor = data.cursor;
-      addEvents(data && data.events);
+      var events = (data && data.events) || [];
+      if (events.length) {
+        var newest = typeof cursor === "number" ? cursor : -1;
+        for (var i = 0; i < events.length; i += 1) {
+          if (events[i] && typeof events[i].seq === "number" && events[i].seq > newest) newest = events[i].seq;
+        }
+        cursor = newest;
+      } else if (data && typeof data.cursor === "number") {
+        cursor = data.cursor;
+      }
+      addEvents(events);
     }).catch(function () {});
   }
 

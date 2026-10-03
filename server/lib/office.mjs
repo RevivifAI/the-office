@@ -346,3 +346,12 @@ export function normalizeActivity(rawEvents, { agentById, issueIdentifierById } 
   }
   return out.reverse();
 }
+
+/**
+ * Return a newest-first copy of an activity batch. The rolling window is kept
+ * chronological (oldest first); the ticker label promises newest first, so the
+ * served batch is reversed without mutating the window.
+ */
+export function newestFirst(events) {
+  return Array.isArray(events) ? [...events].reverse() : [];
+}
