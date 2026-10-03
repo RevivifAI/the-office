@@ -11,7 +11,7 @@ import assert from "node:assert/strict";
 
 import { createActivityReporter } from "../server/activity.mjs";
 import { createOfficeApp } from "../server/app.mjs";
-import { normalizeActivity, sanitizeNote } from "../server/lib/office.mjs";
+import { newestFirst, normalizeActivity, sanitizeNote } from "../server/lib/office.mjs";
 
 const COMPANY_ID = "00000000-0000-4000-8000-000000000001";
 const results = [];
@@ -119,6 +119,12 @@ async function main() {
     assert.equal(byName.Sienna.currentTask, null);
   });
 
+  await check("newestFirst reverses a batch without mutating the input", () => {
+    const input = [{ seq: 1 }, { seq: 2 }, { seq: 3 }];
+    assert.deepEqual(newestFirst(input).map((e) => e.seq), [3, 2, 1]);
+    assert.deepEqual(input.map((e) => e.seq), [1, 2, 3]);
+  });
+
   await check("reporter GET /state and GET /activity behave", async () => {
     const stateRes = await fetch(`http://127.0.0.1:${reporterPort}/state`);
     assert.equal(stateRes.status, 200);
@@ -128,8 +134,17 @@ async function main() {
     const actRes = await fetch(`http://127.0.0.1:${reporterPort}/activity`);
     assert.equal(actRes.status, 200);
     const act = await actRes.json();
-    assert.deepEqual(act.events.map((e) => e.id), ["e1", "e2", "e3"]);
+    assert.deepEqual(act.events.map((e) => e.id), ["e3", "e2", "e1"]);
+    assert.deepEqual(act.events.map((e) => e.seq), [3, 2, 1]);
     assert.equal(typeof act.cursor, "number");
+    assert.equal(act.cursor, 3);
+
+    const newestRes = await fetch(`http://127.0.0.1:${reporterPort}/activity?limit=2`);
+    const newest = await newestRes.json();
+    assert.deepEqual(newest.events.map((e) => e.id), ["e3", "e2"]);
+    assert.deepEqual(newest.events.map((e) => e.seq), [3, 2]);
+    assert.ok(!newest.events.some((e) => e.id === "e1"), "oldest event is not in the newest page");
+    assert.equal(newest.cursor, 3);
 
     const afterRes = await fetch(`http://127.0.0.1:${reporterPort}/activity?since=${act.cursor}`);
     const after = await afterRes.json();
@@ -174,7 +189,8 @@ async function main() {
     const actRes = await fetch(`http://127.0.0.1:${appPort}/live/activity`);
     assert.equal(actRes.status, 200);
     const act = await actRes.json();
-    assert.deepEqual(act.events.map((e) => e.id), ["e1", "e2", "e3"]);
+    assert.deepEqual(act.events.map((e) => e.id), ["e3", "e2", "e1"]);
+    assert.deepEqual(act.events.map((e) => e.seq), [3, 2, 1]);
 
     const postRes = await fetch(`http://127.0.0.1:${appPort}/live/state`, { method: "POST" });
     assert.equal(postRes.status, 405);

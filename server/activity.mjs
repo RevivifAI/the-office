@@ -31,6 +31,7 @@ import {
   asArray,
   currentTasksByAgent,
   latestComment,
+  newestFirst,
   normalizeActivity,
   normalizeState,
   sanitizeError,
@@ -143,7 +144,7 @@ export function createActivityReporter(config = readConfig()) {
 
   function getActivity({ since, limit } = {}) {
     const max = Math.max(1, Math.min(200, Number(limit) || 50));
-    const sinceSeq = Number.isFinite(Number(since)) ? Number(since) : -1;
+    const sinceSeq = since == null || since === "" || !Number.isFinite(Number(since)) ? -1 : Number(since);
     let events = window.filter((event) => event.seq > sinceSeq);
     if (sinceSeq < 0 && events.length > max) events = events.slice(-max);
     else if (events.length > max) events = events.slice(0, max);
@@ -151,7 +152,7 @@ export function createActivityReporter(config = readConfig()) {
       capturedAt: state.capturedAt,
       controlPlaneReachable: state.controlPlaneReachable,
       cursor,
-      events,
+      events: newestFirst(events),
       count: events.length,
     };
   }
